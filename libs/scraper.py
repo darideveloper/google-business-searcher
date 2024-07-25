@@ -36,7 +36,7 @@ class Scraper(WebScraping):
         """
         
         selectors = {
-            "results": '[id$="tab-overview"] > div[data-hveid] a[jsname]'
+            "results": '#search > div > div div[data-hveid] a[jsname]'
         }
         
         # Load page
@@ -47,6 +47,7 @@ class Scraper(WebScraping):
         
         # Get result lins
         results_links = self.get_attribs(selectors["results"], "href")
+        results_links = list(map(self.__get_clean_domain__, results_links))
         
         # Firnd the first link with a business word in the url
         business_name_words = business_name.split(" ")
@@ -55,7 +56,7 @@ class Scraper(WebScraping):
                 if word.lower() in result_link:
                     return result_link
                         
-        # Default empty
+        # Default empty domain
         return ""
     
     def __get_clean_domain__(self, link: str) -> str:
@@ -99,7 +100,6 @@ class Scraper(WebScraping):
                 print("\tWeb page not found, skipping...")
                 continue
             
-            web_page = self.__get_clean_domain__(web_page)
             print(f"\tWeb page found: {web_page}")
             
             # creation_date = self.__get_created_date__(web_page)
