@@ -1,4 +1,3 @@
-from time import sleep
 from urllib.parse import quote
 
 from libs.web_scraping import WebScraping
@@ -6,25 +5,31 @@ from libs.web_scraping import WebScraping
 
 class Scraper(WebScraping):
     
-    def __init__(self, bussinesses_data: list, wait_time: int):
+    def __init__(self):
         """ Setup scraper
 
         Args:
-            bussinesses_data (list): businesses data from excel: [name, phone]
             wait_time (int): Time to wait between requests
         """
-        
-        # Instance data
-        self.bussinesses_data = bussinesses_data
-        self.wait_time = wait_time
         
         # Start scraper
         super().__init__()
         
-        # Autorun
-        self.extract_pages()
+    def __get_clean_domain__(self, link: str) -> str:
+        """ Clean domain from link
+
+        Args:
+            link (str): Link
+
+        Returns:
+            str: Clean domain
+        """
         
-    def __get_web_page__(self, business_name: str, business_phone: str) -> str:
+        base_domain = link.split("/")[2]
+        domain = f"https://{base_domain}"
+        return domain
+        
+    def get_web_page(self, business_name: str, business_phone: str) -> str:
         """ Get web page searching in google with business name and phone
 
         Args:
@@ -58,22 +63,8 @@ class Scraper(WebScraping):
                         
         # Default empty domain
         return ""
-    
-    def __get_clean_domain__(self, link: str) -> str:
-        """ Clean domain from link
-
-        Args:
-            link (str): Link
-
-        Returns:
-            str: Clean domain
-        """
-        
-        base_domain = link.split("/")[2]
-        domain = f"https://{base_domain}"
-        return domain
            
-    def __get_created_date__(self, web_page: str) -> str:
+    def get_created_date(self, web_page: str) -> str:
         """ Search page in weveback machine and get creation date
 
         Args:
@@ -84,27 +75,3 @@ class Scraper(WebScraping):
         """
         
         return ""
-    
-    def extract_pages(self):
-        """ Extract each page from excel data and save in output csv """
-        
-        for row in self.bussinesses_data:
-            business_name, business_phone = row
-            
-            print(f"Searching '{business_name}' - {business_phone}...")
-            
-            web_page = self.__get_web_page__(business_name, business_phone)
-            
-            # Skip if not found
-            if not web_page:
-                print("\tWeb page not found, skipping...")
-                continue
-            
-            print(f"\tWeb page found: {web_page}")
-            
-            # creation_date = self.__get_created_date__(web_page)
-            # print(creation_date, web_page)
-            
-            # Wait between requests
-            sleep(self.wait_time)
-    
