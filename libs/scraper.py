@@ -50,7 +50,7 @@ class Scraper(WebScraping):
         search_params = quote(f"{business_name} {business_phone}")
         google_url = f"https://www.google.com/search?q={search_params}"
         self.set_page(google_url)
-        self.refresh_selenium()
+        self.refresh_selenium(time_units=0.1)
         
         # Get result lins
         results_links = self.get_attribs(selectors["results"], "href")
@@ -89,7 +89,7 @@ class Scraper(WebScraping):
         
         # September 22, 2001
         sleep(3)
-        self.refresh_selenium()
+        self.refresh_selenium(time_units=0.1)
         creation_date_str = self.get_text(selectors["creation_date"])
         
         # Validate creation date found
