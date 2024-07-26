@@ -1,3 +1,4 @@
+import os
 from urllib.parse import quote
 from datetime import datetime
 
@@ -6,15 +7,21 @@ from libs.web_scraping import WebScraping
 
 class Scraper(WebScraping):
     
-    def __init__(self):
+    def __init__(self, headless: bool, screenshots_folder: str):
         """ Setup scraper
 
         Args:
+            headless (bool): Run scraper in headless mode
             wait_time (int): Time to wait between requests
         """
         
         # Start scraper
-        super().__init__()
+        super().__init__(
+            headless=headless,
+        )
+        
+        # Instance variables
+        self.screenshots_folder = screenshots_folder
         
     def __get_clean_domain__(self, link: str) -> str:
         """ Clean domain from link
@@ -29,6 +36,20 @@ class Scraper(WebScraping):
         base_domain = link.split("/")[2]
         domain = f"https://{base_domain}"
         return domain
+    
+    def __save_screenshot__(self, function_name: str, identifier: str):
+        """ Save screenshot of the current page
+
+        Args:
+            function_name (str): Function name
+            identifier (str): Identifier (web page or business name)
+        """
+        
+        screenshot_path = os.path.join(
+            self.screenshots_folder,
+            f"{function_name}_{identifier}.png"
+        )
+        self.screenshot(screenshot_path)
         
     def get_web_page(self, business_name: str, business_phone: str) -> str:
         """ Get web page searching in google with business name and phone
@@ -59,14 +80,15 @@ class Scraper(WebScraping):
         ))
         results_links = list(map(self.__get_clean_domain__, results_links))
         
-        # Firnd the first link with a business word in the url
+        # find the first link with a business word in the url
         business_name_words = business_name.split(" ")
         for result_link in results_links:
             for word in business_name_words:
                 if word.lower() in result_link:
                     return result_link
-                        
+            
         # Default empty domain
+        self.__save_screenshot__("get_web_page", business_name)
         return ""
            
     def get_creation_date(self, web_page: str) -> str:
@@ -94,6 +116,8 @@ class Scraper(WebScraping):
                     
         # Validate creation date found
         if not creation_date_str:
+            base_domain = web_page.split("/")[2]
+            self.__save_screenshot__("get_creation_date", base_domain)
             return ""
         
         # Convert to YYYY-MM-DD

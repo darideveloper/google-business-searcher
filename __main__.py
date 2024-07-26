@@ -17,6 +17,7 @@ DATA_FOLDER = os.path.join(CURRENT_DIR, "data")
 EXCEL_FILE = os.path.join(DATA_FOLDER, "input.xlsx")
 OUTPUT_CSV = os.path.join(DATA_FOLDER, "output.csv")
 SCREENSHOTS_FOLDER = os.path.join(CURRENT_DIR, "screenshots")
+HEADLESS = os. getenv("SHOW_BROWSER") == "False"
 
 
 def main():
@@ -34,7 +35,10 @@ def main():
         quit()
     
     # Start libs
-    scraper = Scraper()
+    scraper = Scraper(
+        headless=HEADLESS,
+        screenshots_folder=SCREENSHOTS_FOLDER
+    )
     csv_writer = CsvWriter(OUTPUT_CSV)
     ss_manager = SpreadsheetManager(EXCEL_FILE)
     
