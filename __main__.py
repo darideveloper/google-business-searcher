@@ -4,9 +4,16 @@ from time import sleep
 from dotenv import load_dotenv
 
 from libs.scraper import Scraper
+from libs.csv_urils import CsvWriter
 
+# Env vaiables
 load_dotenv()
 WAIT_TIME = int(os.getenv("WAIT_TIME"))
+
+# Paths
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_FILE = os.path.join(CURRENT_DIR, "data.xlsx")
+OUTPUT_CSV = os.path.join(CURRENT_DIR, "output.csv")
 
 
 def main():
@@ -22,6 +29,15 @@ def main():
     
     # Start scraper
     scraper = Scraper()
+    
+    # Start csv writer
+    csv_writer = CsvWriter(OUTPUT_CSV)
+    
+    # Write csv header
+    csv_writer.write_row(
+        "w",
+        ["Business Name", "Phone", "Web Page", "Creation Date"]
+    )
 
     # Scrape each business
     for row in bussinesses_data:
@@ -38,11 +54,25 @@ def main():
         
         print(f"\tWeb page found: {web_page}")
         
-        # creation_date = self.__get_created_date__(web_page)
-        # print(creation_date, web_page)
+        # Log web page
+        creation_date = scraper.get_creation_date(web_page)
+        
+        if not creation_date:
+            print("\tCreation date not found, skipping...")
+            continue
+        
+        # Log creation date
+        print(f"\tCreation date found: {creation_date}")
+        
+        csv_writer.write_row(
+            "a",
+            [business_name, business_phone, web_page, creation_date]
+        )
         
         # Wait between requests
         sleep(WAIT_TIME)
+
+    input("Done! Press enter to exit...")
 
 
 if __name__ == "__main__":

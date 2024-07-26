@@ -1,4 +1,6 @@
+from time import sleep
 from urllib.parse import quote
+from datetime import datetime
 
 from libs.web_scraping import WebScraping
 
@@ -52,6 +54,10 @@ class Scraper(WebScraping):
         
         # Get result lins
         results_links = self.get_attribs(selectors["results"], "href")
+        results_links = list(filter(
+            lambda link: link is not None and link.strip() != "",
+            results_links
+        ))
         results_links = list(map(self.__get_clean_domain__, results_links))
         
         # Firnd the first link with a business word in the url
@@ -64,14 +70,33 @@ class Scraper(WebScraping):
         # Default empty domain
         return ""
            
-    def get_created_date(self, web_page: str) -> str:
+    def get_creation_date(self, web_page: str) -> str:
         """ Search page in weveback machine and get creation date
 
         Args:
             web_page (str): _description_
             
         Returns:
-            str: creation date
+            str: creation date YYYY-MM-DD
         """
         
-        return ""
+        selectors = {
+            "creation_date": ".captures-range-info a",
+        }
+        
+        archive_url = f"https://web.archive.org/web/20240000000000*/{web_page}"
+        self.set_page(archive_url)
+        
+        # September 22, 2001
+        sleep(3)
+        self.refresh_selenium()
+        creation_date_str = self.get_text(selectors["creation_date"])
+        
+        # Validate creation date found
+        if not creation_date_str:
+            return ""
+        
+        # Convert to YYYY-MM-DD
+        creation_date = datetime.strptime(creation_date_str, "%B %d, %Y")
+        creation_date_format = creation_date.strftime("%Y-%m-%d")
+        return creation_date_format
