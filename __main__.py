@@ -97,9 +97,7 @@ def main():
         
         # Wait between requests
         sleep(WAIT_TIME)
-
-    input("Done! Press enter to exit...")
-
+        
 
 if __name__ == "__main__":
     main()
