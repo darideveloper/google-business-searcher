@@ -13,13 +13,25 @@ WAIT_TIME = int(os.getenv("WAIT_TIME"))
 
 # Paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-EXCEL_FILE = os.path.join(CURRENT_DIR, "input.xlsx")
-OUTPUT_CSV = os.path.join(CURRENT_DIR, "output.csv")
+DATA_FOLDER = os.path.join(CURRENT_DIR, "data")
+EXCEL_FILE = os.path.join(DATA_FOLDER, "input.xlsx")
+OUTPUT_CSV = os.path.join(DATA_FOLDER, "output.csv")
+SCREENSHOTS_FOLDER = os.path.join(CURRENT_DIR, "screenshots")
 
 
 def main():
     
     print("Starting...")
+    
+    # Create folders
+    os.makedirs(DATA_FOLDER, exist_ok=True)
+    os.makedirs(SCREENSHOTS_FOLDER, exist_ok=True)
+    
+    # Validate if excel file exists
+    if not os.path.exists(EXCEL_FILE):
+        print(f"Error: File '{EXCEL_FILE}' not found")
+        print("Please make sure the file exists and try again")
+        quit()
     
     # Start libs
     scraper = Scraper()
