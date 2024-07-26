@@ -87,11 +87,12 @@ class Scraper(WebScraping):
         archive_url = f"https://web.archive.org/web/20240000000000*/{web_page}"
         self.set_page(archive_url)
         
-        # September 22, 2001
-        sleep(3)
-        self.refresh_selenium(time_units=0.1)
-        creation_date_str = self.get_text(selectors["creation_date"])
-        
+        # Try to get creation date 3 times
+        creation_date_str = ""
+        for _ in range(3):
+            self.refresh_selenium(time_units=1)
+            creation_date_str = self.get_text(selectors["creation_date"])
+                    
         # Validate creation date found
         if not creation_date_str:
             return ""
