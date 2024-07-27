@@ -121,6 +121,11 @@ class Scraper(WebScraping):
             return ""
         
         # Convert to YYYY-MM-DD
-        creation_date = datetime.strptime(creation_date_str, "%B %d, %Y")
+        try:
+            creation_date_str = creation_date_str.replace(".", "")
+            creation_date = datetime.strptime(creation_date_str, "%B %d, %Y")
+        except ValueError:
+            print(f"Error converting date: {creation_date_str}")
+            return ""
         creation_date_format = creation_date.strftime("%Y-%m-%d")
         return creation_date_format

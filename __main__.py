@@ -78,17 +78,12 @@ def main():
             print("\tWeb page not found, skipping...")
             continue
         
-        print(f"\tWeb page found: {web_page}")
-        
         # Log web page
         creation_date = scraper.get_creation_date(web_page)
         
         if not creation_date:
             print("\tCreation date not found, skipping...")
             continue
-        
-        # Log creation date
-        print(f"\tCreation date found: {creation_date}")
         
         csv_writer.write_row(
             "a",
