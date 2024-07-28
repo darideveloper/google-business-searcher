@@ -79,13 +79,13 @@ def main():
         
         # Get web page
         web_page = scraper.get_web_page(business_name, business_phone)
-        if not web_page:
+        if web_page:
+            # Get creation date
+            creation_date = scraper.get_creation_date(web_page)
+            if not creation_date:
+                print("\tCreation date not found, skipping...")
+        else:
             print("\tWeb page not found, skipping...")
-        
-        # Get creation date
-        creation_date = scraper.get_creation_date(web_page)
-        if not creation_date:
-            print("\tCreation date not found, skipping...")
         
         csv_writer.write_row(
             "a",
