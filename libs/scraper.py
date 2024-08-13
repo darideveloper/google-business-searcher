@@ -80,6 +80,12 @@ class Scraper(WebScraping):
         ))
         results_links = list(map(self.__get_clean_domain__, results_links))
         
+        # Remove .gov links
+        results_links = list(filter(
+            lambda link: ".gov" not in link,
+            results_links
+        ))
+        
         # find the first link with a business word in the url
         business_name_words = business_name.split(" ")
         for result_link in results_links:
